@@ -14,7 +14,7 @@ const rubros = ['Alimentación', 'Alojamiento', 'Información', 'Transporte', 'R
 
 function BrandMark() {
   return <div className="brand-mark" aria-label="Corporación Salvadoreña de Turismo">
-    <svg className="seal-svg" viewBox="160 0 145 130" role="img" aria-label="Escudo de El Salvador rodeado de estrellas">
+      <svg className="seal-svg" viewBox="160 0 145 130" role="img" aria-label="Escudo de El Salvador rodeado de estrellas">
       <image href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-VsJ1uAcHswj0cac7QIdmcbCQVv10zM.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
     </svg>
     <div className="brand-name">CORPORACIÓN SALVADOREÑA<br /><strong>DE TURISMO</strong></div>
@@ -35,11 +35,11 @@ export default function Page() {
   }
 
   return <main className="page-shell">
-    <header className="topbar"><div className="topbar-inner"><BrandMark /><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span></div></header>
+    <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span></div></div></div></header>
     <div className="form-wrap">
       <div className="intro"><div className="eyebrow">EVALUACIÓN DE ACTIVIDADES</div><h1>Su opinión nos ayuda<br /><em>a mejorar.</em></h1><p>Comparta su experiencia. Sus respuestas contribuyen a fortalecer la calidad del desarrollo turístico y empresarial.</p></div>
       <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
-        <section className="meta-card"><div className="meta-title"><div><span className="section-number">01</span><h2>Información de la actividad</h2></div><span className="doc-code">FO-GPL-01 <i>·</i> Rev. 01</span></div>
+        <section className="meta-card"><div className="meta-title"><div><span className="section-number">01</span><h2>Información de la actividad</h2></div></div>
           <div className="fields-grid"><label className="field wide">Nombre de la actividad<input id="actividad" name="actividad" placeholder="Ej. Taller de desarrollo turístico" required /></label><label className="field wide">Lugar de actividad<input name="lugar" placeholder="Municipio, departamento" /></label><label className="field">Fecha de actividad<input name="fecha" type="date" /></label><label className="field">CDT o municipio que representa<input name="municipio" placeholder="Escriba su respuesta" /></label>
           <fieldset className="field wide"><legend>Rubro o sector que representa</legend><div className="checks">{rubros.map((item) => <label key={item} className="check-label"><input type="checkbox" name="rubro" value={item} />{item}</label>)}<label className="other-input"><span>Especifique:</span><input name="otro" aria-label="Especifique otro rubro" /></label></div></fieldset>
           <fieldset className="field wide"><legend>Género</legend><div className="checks"><label className="check-label"><input type="radio" name="genero" value="Femenino" />Femenino</label><label className="check-label"><input type="radio" name="genero" value="Masculino" />Masculino</label><label className="check-label"><input type="radio" name="genero" value="Prefiero no decir" />Prefiero no decir</label></div></fieldset></div>
