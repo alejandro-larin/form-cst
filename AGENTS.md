@@ -24,14 +24,18 @@ There is **no** lint, format, or test script/config; do not invent or add one un
 ## Architecture
 
 - `app/layout.tsx` — root layout, metadata/icons, `@vercel/analytics` loaded only in production.
-- `app/page.tsx` — the entire app: a `'use client'` component holding form state, `criteria`/`ratings`/`rubros` data arrays, and all markup.
+- `app/page.tsx` — all form state, submit/cookie logic, and markup (`'use client'`).
+- `app/api/evaluaciones/route.ts` — `POST` handler: validates with zod, appends one row to a Google Sheet via `googleapis`, and sets the `corsatur_evaluacion_enviada` cookie.
+- `lib/evaluacion.ts` — shared `criteria`/`ratings`/`rubros`, criterion keys, sheet column names, cookie constants, and payload type. Keep it in sync with `page.tsx` and the route.
 - `app/globals.css` — Tailwind v4 (`@import 'tailwindcss'`, no `tailwind.config`) plus nearly all actual styling as hand-written semantic classes (`.topbar`, `.criterion-row`, `.rating-choice`, ...). When changing markup in `page.tsx`, update matching rules here; do not assume utility classes alone style the page.
 - `lib/utils.ts` — `cn()` helper (clsx + tailwind-merge).
 - `components/ui/` — shadcn-generated primitives (currently only `button.tsx`).
 
 ## Behavior notes
 
-- The form has no backend/API. "Enviar evaluación" only sets local `sent` state.
+- Submissions go to `POST /api/evaluaciones`; there is no database. All visible fields and all 13 rating criteria are required, validated on the client and re-validated with zod on the server. Rows are appended to the sheet configured by env vars. The route auto-creates the header row only when the sheet is empty and uses `RAW` values to avoid formula injection.
+- Required server env vars (also set in Vercel): `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` (with `\n` escapes), `GOOGLE_SHEET_ID`; optional `GOOGLE_SHEET_RANGE` (tab name or A1 range). When it is unset, the route uses the spreadsheet's first tab. Share the spreadsheet with the service account as Editor.
+- On success the API sets the 7-day `corsatur_evaluacion_enviada` cookie (not HttpOnly, no PII). `page.tsx` reads it on mount to show the confirmation and disables resubmission until "Enviar otra evaluación" / "Limpiar formulario" clears it.
 - `BrandMark` in `app/page.tsx` uses the local transparent logo `public/corsatur-logo.png` (white background removed, edges alpha-blended).
 - All images are unoptimized (`images.unoptimized: true`).
 - No `.env*` files are committed (`.gitignore` ignores them); analytics only activates in production.

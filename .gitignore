@@ -9,6 +9,7 @@
 
 # production
 /build
+vulkan-515122-32c6fac59d04.json
 
 # debug
 npm-debug.log*
