@@ -31,7 +31,7 @@ There is **no** lint, format, or test script/config; do not invent or add one un
 
 ## Behavior notes
 
-- The form has no backend/API. "Enviar evaluación" only sets local `sent` state; "Descargar" builds a JSON Blob client-side.
-- `BrandMark` in `app/page.tsx` hotlinks its logo image from an external `hebbkx1anhila5yf.public.blob.vercel-storage.com` URL.
+- The form has no backend/API. "Enviar evaluación" only sets local `sent` state.
+- `BrandMark` in `app/page.tsx` uses the local transparent logo `public/corsatur-logo.png` (white background removed, edges alpha-blended).
 - All images are unoptimized (`images.unoptimized: true`).
 - No `.env*` files are committed (`.gitignore` ignores them); analytics only activates in production.
