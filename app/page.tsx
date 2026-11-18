@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Check, ChevronDown, ClipboardCheck, RotateCcw } from 'lucide-react'
 
+import { ThemeToggle } from '@/components/theme-toggle'
 import { criteria, criterioKey, EVALUACION_COOKIE, ratings, rubros } from '@/lib/evaluacion'
 
 function BrandMark() {
   return <div className="brand-mark" aria-label="Corporación Salvadoreña de Turismo">
       <svg className="seal-svg" viewBox="160 0 145 130" role="img" aria-label="Escudo de El Salvador rodeado de estrellas">
-      <image href="/corsatur-logo.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
+      <image className="seal-light" href="/corsatur-logo.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
+      <image className="seal-dark" href="/corsatur-logo-dark.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
     </svg>
     <div className="brand-name">CORPORACIÓN SALVADOREÑA<br /><strong>DE TURISMO</strong></div>
   </div>
@@ -162,7 +164,7 @@ export default function Page() {
   }
 
   return <main className="page-shell">
-    <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span></div></div></div></header>
+    <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span></div><ThemeToggle /></div></div></header>
     <div className="form-wrap">
       <div className="intro"><div className="eyebrow">EVALUACIÓN DE ACTIVIDADES</div><h1>Su opinión nos ayuda<br /><em>a mejorar.</em></h1><p>Comparta su experiencia. Sus respuestas contribuyen a fortalecer la calidad del desarrollo turístico y empresarial.</p></div>
       <form ref={formRef} onSubmit={handleSubmit} onChange={clearFieldError} noValidate>

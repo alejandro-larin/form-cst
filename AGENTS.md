@@ -27,7 +27,8 @@ There is **no** lint, format, or test script/config; do not invent or add one un
 - `app/page.tsx` — all form state, submit/cookie logic, and markup (`'use client'`).
 - `app/api/evaluaciones/route.ts` — `POST` handler: validates with zod, appends one row to a Google Sheet via `googleapis`, and sets the `corsatur_evaluacion_enviada` cookie.
 - `lib/evaluacion.ts` — shared `criteria`/`ratings`/`rubros`, criterion keys, sheet column names, cookie constants, and payload type. Keep it in sync with `page.tsx` and the route.
-- `app/globals.css` — Tailwind v4 (`@import 'tailwindcss'`, no `tailwind.config`) plus nearly all actual styling as hand-written semantic classes (`.topbar`, `.criterion-row`, `.rating-choice`, ...). When changing markup in `page.tsx`, update matching rules here; do not assume utility classes alone style the page.
+- `app/globals.css` — Tailwind v4 (`@import 'tailwindcss'`, no `tailwind.config`) plus nearly all actual styling as hand-written semantic classes (`.topbar`, `.criterion-row`, `.rating-choice`, ...). Colors are CSS variables (`--gold*`, `--surface*`, `--text-*`, ...) with light/dark values; change the tokens instead of adding hardcoded hex colors. The light theme keeps the original blue/slate palette; gold is applied only under `.dark`. When changing markup in `page.tsx`, update matching rules here; do not assume utility classes alone style the page.
+- `components/theme-toggle.tsx` — toggles `.dark` on `<html>` and persists the choice in `localStorage` (`corsatur-theme`). The class is applied before hydration by an inline script in `app/layout.tsx`; keep `suppressHydrationWarning` on `<html>`.
 - `lib/utils.ts` — `cn()` helper (clsx + tailwind-merge).
 - `components/ui/` — shadcn-generated primitives (currently only `button.tsx`).
 
@@ -36,6 +37,6 @@ There is **no** lint, format, or test script/config; do not invent or add one un
 - Submissions go to `POST /api/evaluaciones`; there is no database. All visible fields and all 13 rating criteria are required, validated on the client and re-validated with zod on the server. Rows are appended to the sheet configured by env vars. The route auto-creates the header row only when the sheet is empty and uses `RAW` values to avoid formula injection.
 - Required server env vars (also set in Vercel): `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` (with `\n` escapes), `GOOGLE_SHEET_ID`; optional `GOOGLE_SHEET_RANGE` (tab name or A1 range). When it is unset, the route uses the spreadsheet's first tab. Share the spreadsheet with the service account as Editor.
 - On success the API sets the 7-day `corsatur_evaluacion_enviada` cookie (not HttpOnly, no PII). `page.tsx` reads it on mount to show the confirmation and disables resubmission until "Enviar otra evaluación" / "Limpiar formulario" clears it.
-- `BrandMark` in `app/page.tsx` uses the local transparent logo `public/corsatur-logo.png` (white background removed, edges alpha-blended).
+- `BrandMark` in `app/page.tsx` uses the local transparent logo `public/corsatur-logo.png` in light mode (blue) and `public/corsatur-logo-dark.png` in dark mode (white emblem, yellow stars); both are stacked in the SVG and swapped with `.dark` rules in `globals.css`.
 - All images are unoptimized (`images.unoptimized: true`).
 - No `.env*` files are committed (`.gitignore` ignores them); analytics only activates in production.
