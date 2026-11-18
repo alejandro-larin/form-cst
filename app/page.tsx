@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Check, ChevronDown, ClipboardCheck, RotateCcw } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 import { ThemeToggle } from '@/components/theme-toggle'
 import { criteria, criterioKey, EVALUACION_COOKIE, ratings, rubros } from '@/lib/evaluacion'
@@ -17,6 +18,7 @@ function BrandMark() {
 }
 
 export default function Page() {
+  const reduce = useReducedMotion() ?? false
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [sent, setSent] = useState(false)
   const [alreadySent, setAlreadySent] = useState(false)
@@ -28,6 +30,23 @@ export default function Page() {
   const total = useMemo(() => criteria.reduce((n, section) => n + section.items.length, 0), [])
   const progress = Math.round((answered / total) * 100)
   const update = (key: string, value: string) => { setAnswers((current) => ({ ...current, [key]: value })); setSent(false) }
+
+  const reveal = (delay = 0) => ({
+    initial: reduce ? { opacity: 0 } : { opacity: 0, y: 22 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: '-60px' },
+    transition: { duration: reduce ? 0.15 : 0.55, delay, ease: 'easeOut' as const },
+  })
+  const introContainer = { hidden: {}, show: { transition: { staggerChildren: reduce ? 0 : 0.09, delayChildren: 0.05 } } }
+  const introItem = {
+    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: reduce ? 0.15 : 0.5, ease: 'easeOut' as const } },
+  }
+  const listVariants = { hidden: {}, show: { transition: { staggerChildren: reduce ? 0 : 0.07 } } }
+  const groupVariants = {
+    hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: reduce ? 0.15 : 0.45, ease: 'easeOut' as const } },
+  }
 
   useEffect(() => {
     const enviada = document.cookie.split(';').some((item) => item.trim() === `${EVALUACION_COOKIE}=1`)
@@ -166,9 +185,13 @@ export default function Page() {
   return <main className="page-shell">
     <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span></div><ThemeToggle /></div></div></header>
     <div className="form-wrap">
-      <div className="intro"><div className="eyebrow">EVALUACIÓN DE ACTIVIDADES</div><h1>Su opinión nos ayuda<br /><em>a mejorar.</em></h1><p>Comparta su experiencia. Sus respuestas contribuyen a fortalecer la calidad del desarrollo turístico y empresarial.</p></div>
+      <motion.div className="intro" initial="hidden" animate="show" variants={introContainer}>
+        <motion.div className="eyebrow" variants={introItem}>EVALUACIÓN DE ACTIVIDADES</motion.div>
+        <motion.h1 variants={introItem}>Su opinión nos ayuda<br /><em>a mejorar.</em></motion.h1>
+        <motion.p variants={introItem}>Comparta su experiencia. Sus respuestas contribuyen a fortalecer la calidad del desarrollo turístico y empresarial.</motion.p>
+      </motion.div>
       <form ref={formRef} onSubmit={handleSubmit} onChange={clearFieldError} noValidate>
-        <section className="meta-card"><div className="meta-title"><div><span className="section-number">01</span><h2>Información de la actividad</h2></div></div>
+        <motion.section className="meta-card" {...reveal()}><div className="meta-title"><div><span className="section-number">01</span><h2>Información de la actividad</h2></div></div>
           <div className="fields-grid">
             <label className="field wide">Nombre de la actividad<input id="actividad" name="actividad" placeholder="Ej. Taller de desarrollo turístico" required aria-invalid={Boolean(errors.actividad)} />{errors.actividad && <span className="field-error">{errors.actividad}</span>}</label>
             <label className="field wide">Lugar de actividad<input name="lugar" placeholder="Municipio, departamento" aria-invalid={Boolean(errors.lugar)} />{errors.lugar && <span className="field-error">{errors.lugar}</span>}</label>
@@ -177,16 +200,20 @@ export default function Page() {
             <fieldset className="field wide"><legend>Rubro o sector que representa</legend><div className="checks">{rubros.map((item) => <label key={item} className="check-label"><input type="checkbox" name="rubro" value={item} />{item}</label>)}<label className="other-input"><span>Especifique:</span><input name="otro" aria-label="Especifique otro rubro" aria-invalid={Boolean(errors.otro)} /></label></div>{errors.rubro && <span className="field-error">{errors.rubro}</span>}{errors.otro && <span className="field-error">{errors.otro}</span>}</fieldset>
             <fieldset className="field wide"><legend>Género</legend><div className="checks"><label className="check-label"><input type="radio" name="genero" value="Femenino" />Femenino</label><label className="check-label"><input type="radio" name="genero" value="Masculino" />Masculino</label><label className="check-label"><input type="radio" name="genero" value="Prefiero no decir" />Prefiero no decir</label></div>{errors.genero && <span className="field-error">{errors.genero}</span>}</fieldset>
           </div>
-        </section>
-        <section className="rating-section"><div className="rating-heading"><div><span className="section-number">02</span><h2>Cuéntenos cómo le fue</h2></div><span className="required-note">Seleccione una opción por criterio</span></div>
+        </motion.section>
+        <motion.section className="rating-section" {...reveal(0.03)}><div className="rating-heading"><div><span className="section-number">02</span><h2>Cuéntenos cómo le fue</h2></div><span className="required-note">Seleccione una opción por criterio</span></div>
           <div className="instructions"><strong>INDICACIONES</strong><span> Para cada aspecto, marque la opción que mejor represente su valoración.</span></div>
-          <div className="progress-wrap"><div className="progress-label"><span>Progreso de evaluación</span><span>{answered} de {total} respondidos</span></div><div className="progress-track"><div className="progress-fill" style={{ width: `${progress}%` }} /></div></div>
-          <div className="rating-list">{criteria.map((section, sectionIndex) => <div className="criterion-group" key={section.group}><div className="group-label"><span>0{sectionIndex + 1}</span>{section.group}</div><div className="criterion-rows">{section.items.map((item, itemIndex) => { const key = criterioKey(sectionIndex, itemIndex); return <div className="criterion-row" key={key}><div className="criterion-label"><p>{item}</p>{errors[key] && <span className="field-error">{errors[key]}</span>}</div><div className={`rating-options ${errors[key] ? 'invalid' : ''}`} role="radiogroup" aria-label={item} aria-invalid={Boolean(errors[key])}>{ratings.map((rating, index) => <label key={rating} className={`rating-choice ${answers[key] === rating ? 'selected' : ''}`}><input type="radio" name={key} value={rating} checked={answers[key] === rating} onChange={() => update(key, rating)} aria-label={rating} /><span className="rating-number">{['10', '9–8', '7', '6', '≤5'][index]}</span><span className="rating-name">{rating.split(' (')[0]}</span></label>)}</div></div> })}</div></div>)}</div>
-        </section>
-        <section className="extra-card"><div className="extra-title"><span className="section-number">03</span><h2>Una última pregunta</h2></div><div className="participation-row"><p>¿Participaría en otra actividad como esta?</p><div className="segmented"><label><input type="radio" name="participaria" value="Sí" />Sí</label><label><input type="radio" name="participaria" value="No" />No</label></div></div>{errors.participaria && <span className="field-error participation-error">{errors.participaria}</span>}<div className="participation-row"><p>¿Ha participado en otras actividades de CORSATUR?</p><div className="segmented"><label><input type="radio" name="previa" value="Sí" />Sí</label><label><input type="radio" name="previa" value="No" />No</label></div></div>{errors.previa && <span className="field-error participation-error">{errors.previa}</span>}<label className="field comments-label">Recomendaciones o aspectos que sugiere mejorar<textarea name="recomendaciones" rows={4} placeholder="Sus comentarios son importantes para nosotros…" aria-invalid={Boolean(errors.recomendaciones)} />{errors.recomendaciones && <span className="field-error">{errors.recomendaciones}</span>}</label></section>
-        <div className="form-actions"><button className="reset-button" type="button" onClick={resetForm}><RotateCcw size={15} /> Limpiar formulario</button><div className="primary-actions"><button className="submit-button" type="submit" disabled={sending || alreadySent}>{sending ? 'Enviando…' : 'Enviar evaluación'} <span>↗</span></button></div></div>
-        {error && <div className="error-message" role="alert">{error}</div>}
-        {sent && <div className="success-message" role="status"><Check size={18} /> <span>Su respuesta se envió correctamente. Gracias por compartir su opinión.</span>{alreadySent && <button className="again-button" type="button" onClick={resetForm}>Enviar otra evaluación</button>}</div>}
+          <div className="progress-wrap"><div className="progress-label"><span>Progreso de evaluación</span><span>{answered} de {total} respondidos</span></div><div className="progress-track"><motion.div className="progress-fill" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 90, damping: 20 }} /></div></div>
+          <motion.div className="rating-list" variants={listVariants} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-40px' }}>{criteria.map((section, sectionIndex) => <motion.div className="criterion-group" key={section.group} variants={groupVariants}><div className="group-label"><span>0{sectionIndex + 1}</span>{section.group}</div><div className="criterion-rows">{section.items.map((item, itemIndex) => { const key = criterioKey(sectionIndex, itemIndex); return <div className="criterion-row" key={key}><div className="criterion-label"><p>{item}</p>{errors[key] && <span className="field-error">{errors[key]}</span>}</div><div className={`rating-options ${errors[key] ? 'invalid' : ''}`} role="radiogroup" aria-label={item} aria-invalid={Boolean(errors[key])}>{ratings.map((rating, index) => <motion.label key={rating} className={`rating-choice ${answers[key] === rating ? 'selected' : ''}`} whileTap={reduce ? undefined : { scale: 0.97 }}><input type="radio" name={key} value={rating} checked={answers[key] === rating} onChange={() => update(key, rating)} aria-label={rating} /><motion.span className="rating-number" animate={{ scale: answers[key] === rating && !reduce ? 1.08 : 1 }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 18 }}>{['10', '9–8', '7', '6', '≤5'][index]}</motion.span><span className="rating-name">{rating.split(' (')[0]}</span></motion.label>)}</div></div> })}</div>          </motion.div>)}</motion.div>
+        </motion.section>
+        <motion.section className="extra-card" {...reveal(0.04)}><div className="extra-title"><span className="section-number">03</span><h2>Una última pregunta</h2></div><div className="participation-row"><p>¿Participaría en otra actividad como esta?</p><div className="segmented"><label><input type="radio" name="participaria" value="Sí" />Sí</label><label><input type="radio" name="participaria" value="No" />No</label></div></div>{errors.participaria && <span className="field-error participation-error">{errors.participaria}</span>}<div className="participation-row"><p>¿Ha participado en otras actividades de CORSATUR?</p><div className="segmented"><label><input type="radio" name="previa" value="Sí" />Sí</label><label><input type="radio" name="previa" value="No" />No</label></div></div>{errors.previa && <span className="field-error participation-error">{errors.previa}</span>}<label className="field comments-label">Recomendaciones o aspectos que sugiere mejorar<textarea name="recomendaciones" rows={4} placeholder="Sus comentarios son importantes para nosotros…" aria-invalid={Boolean(errors.recomendaciones)} />{errors.recomendaciones && <span className="field-error">{errors.recomendaciones}</span>}</label></motion.section>
+        <motion.div className="form-actions" {...reveal(0.04)}><motion.button className="reset-button" type="button" onClick={resetForm} whileTap={reduce ? undefined : { scale: 0.96 }}><RotateCcw size={15} /> Limpiar formulario</motion.button><div className="primary-actions"><motion.button className="submit-button" type="submit" disabled={sending || alreadySent} whileHover={sending || alreadySent || reduce ? undefined : { y: -1 }} whileTap={sending || alreadySent || reduce ? undefined : { scale: 0.98 }}><AnimatePresence mode="wait" initial={false}><motion.span key={sending ? 'sending' : 'idle'} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduce ? 0 : 0.15 }}>{sending ? 'Enviando…' : 'Enviar evaluación'}</motion.span></AnimatePresence> <span className="submit-arrow">↗</span></motion.button></div></motion.div>
+        <AnimatePresence initial={false}>
+          {error && <motion.div key={error} className="error-message" role="alert" initial={{ opacity: 0, y: -6 }} animate={reduce ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, x: [0, -5, 5, -3, 3, 0] }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduce ? 0.15 : 0.3, ease: 'easeOut' }}>{error}</motion.div>}
+        </AnimatePresence>
+        <AnimatePresence initial={false}>
+          {sent && <motion.div key="success" className="success-message" role="status" initial={{ opacity: 0, y: 10, scale: reduce ? 1 : 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} transition={reduce ? { duration: 0.15 } : { type: 'spring', stiffness: 260, damping: 22 }}><Check size={18} /> <span>Su respuesta se envió correctamente. Gracias por compartir su opinión.</span>{alreadySent && <button className="again-button" type="button" onClick={resetForm}>Enviar otra evaluación</button>}</motion.div>}
+        </AnimatePresence>
       </form>
       <footer><div className="footer-rule" /><div className="footer-content"><div><BrandMark /><p>Edificio Century Tower, nivel 10 · Boulevard Sergio Vieira de Mello No. 243<br />San Salvador, El Salvador · www.corsatur.gob.sv</p></div><span className="footer-right">CORSATUR <b>·</b> GESTIÓN TURÍSTICA<br /><small>PROCESO DE PLANEACIÓN ESTRATÉGICA</small></span></div></footer>
     </div>

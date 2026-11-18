@@ -29,6 +29,7 @@ There is **no** lint, format, or test script/config; do not invent or add one un
 - `lib/evaluacion.ts` — shared `criteria`/`ratings`/`rubros`, criterion keys, sheet column names, cookie constants, and payload type. Keep it in sync with `page.tsx` and the route.
 - `app/globals.css` — Tailwind v4 (`@import 'tailwindcss'`, no `tailwind.config`) plus nearly all actual styling as hand-written semantic classes (`.topbar`, `.criterion-row`, `.rating-choice`, ...). Colors are CSS variables (`--gold*`, `--surface*`, `--text-*`, ...) with light/dark values; change the tokens instead of adding hardcoded hex colors. The light theme keeps the original blue/slate palette; gold is applied only under `.dark`. When changing markup in `page.tsx`, update matching rules here; do not assume utility classes alone style the page.
 - `components/theme-toggle.tsx` — toggles `.dark` on `<html>` and persists the choice in `localStorage` (`corsatur-theme`). The class is applied before hydration by an inline script in `app/layout.tsx`; keep `suppressHydrationWarning` on `<html>`.
+- Animations use Motion (`motion` package, imported from `motion/react`) with `useReducedMotion` fallbacks; there are no CSS keyframes for the page entrance.
 - `lib/utils.ts` — `cn()` helper (clsx + tailwind-merge).
 - `components/ui/` — shadcn-generated primitives (currently only `button.tsx`).
 
