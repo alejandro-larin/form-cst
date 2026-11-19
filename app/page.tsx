@@ -211,7 +211,7 @@ export default function Page() {
           {sent && <motion.div key="success" className="success-message" role="status" initial={{ opacity: 0, y: 10, scale: reduce ? 1 : 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} transition={reduce ? { duration: 0.15 } : { type: 'spring', stiffness: 260, damping: 22 }}><Check size={18} /> <span>Su respuesta se envió correctamente. Gracias por compartir su opinión.</span>{alreadySent && <button className="again-button" type="button" onClick={resetForm}>Enviar otra evaluación</button>}</motion.div>}
         </AnimatePresence>
       </form>
-      <footer><div className="footer-rule" /><div className="footer-content"><div><BrandMark /><p>Edificio Century Tower, nivel 10 · Boulevard Sergio Vieira de Mello No. 243<br />San Salvador, El Salvador · www.corsatur.gob.sv</p></div><span className="footer-right">CORSATUR <b>·</b> GESTIÓN TURÍSTICA<br /><small>PROCESO DE PLANEACIÓN ESTRATÉGICA</small></span></div></footer>
+      <footer><div className="footer-rule" /><div className="footer-content"><BrandMark /><p className="footer-address">Edificio Century Tower, nivel 10 · Boulevard Sergio Vieira de Mello No. 243<br />San Salvador, El Salvador · www.corsatur.gob.sv</p><span className="footer-right">CORSATUR <b>·</b> GESTIÓN TURÍSTICA<br /><small>PROCESO DE PLANEACIÓN ESTRATÉGICA</small></span></div></footer>
     </div>
   </main>
 }
