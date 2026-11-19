@@ -8,12 +8,9 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { criteria, criterioKey, EVALUACION_COOKIE, ratings, rubros } from '@/lib/evaluacion'
 
 function BrandMark() {
-  return <div className="brand-mark" aria-label="Corporación Salvadoreña de Turismo">
-      <svg className="seal-svg" viewBox="160 0 145 130" role="img" aria-label="Escudo de El Salvador rodeado de estrellas">
-      <image className="seal-light" href="/corsatur-logo.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
-      <image className="seal-dark" href="/corsatur-logo-dark.png" x="0" y="0" width="400" height="130" preserveAspectRatio="none" />
-    </svg>
-    <div className="brand-name">CORPORACIÓN SALVADOREÑA<br /><strong>DE TURISMO</strong></div>
+  return <div className="brand-mark" role="img" aria-label="Corporación Salvadoreña de Turismo">
+    <img className="brand-logo brand-logo-light" src="/corsatur-logo-stacked.svg" alt="" aria-hidden="true" width={1092} height={505} />
+    <img className="brand-logo brand-logo-dark" src="/corsatur-logo-stacked-dark.svg" alt="" aria-hidden="true" width={1092} height={505} />
   </div>
 }
 
