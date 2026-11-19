@@ -101,7 +101,7 @@ export default function Page() {
     if (rubrosSeleccionados.length === 0) {
       next.rubro = 'Seleccione al menos un rubro.'
     } else if (rubrosSeleccionados.includes('Otro') && !String(data.get('otro') ?? '').trim()) {
-      next.otro = 'Especifique el otro rubro.'
+      next.otro = 'Complete el campo Específico.'
     }
 
     criteria.forEach((section, groupIndex) => {
@@ -183,26 +183,25 @@ export default function Page() {
   }
 
   return <main className="page-shell">
-    <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span></div><ThemeToggle /></div></div></header>
+    <header className="topbar"><div className="topbar-inner"><BrandMark /><div className="topbar-meta"><span className="secure-label"><span className="secure-dot" /> FORMULARIO INSTITUCIONAL</span><div className="doc-meta"><span>Código: <strong>FO-GPL-01</strong></span><span>Fecha: <strong>28/10/2022</strong></span><span>No. Página: <strong>1/1</strong></span></div><ThemeToggle /></div></div></header>
     <div className="form-wrap">
       <motion.div className="intro" initial="hidden" animate="show" variants={introContainer}>
-        <motion.div className="eyebrow" variants={introItem}>EVALUACIÓN DE ACTIVIDADES</motion.div>
-        <motion.h1 variants={introItem}>Su opinión nos ayuda<br /><em>a mejorar.</em></motion.h1>
-        <motion.p variants={introItem}>Comparta su experiencia. Sus respuestas contribuyen a fortalecer la calidad del desarrollo turístico y empresarial.</motion.p>
+        <motion.div className="eyebrow" variants={introItem}>PROCESO DE PLANEACIÓN ESTRATÉGICA</motion.div>
+        <motion.h1 className="official-title" variants={introItem}>Medición de satisfacción de actividades con <em>Comités de Desarrollo Turístico</em> o empresas.</motion.h1>
       </motion.div>
       <form ref={formRef} onSubmit={handleSubmit} onChange={clearFieldError} noValidate>
         <motion.section className="meta-card" {...reveal()}><div className="meta-title"><div><span className="section-number">01</span><h2>Información de la actividad</h2></div></div>
           <div className="fields-grid">
             <label className="field wide">Nombre de la actividad<input id="actividad" name="actividad" placeholder="Ej. Taller de desarrollo turístico" required aria-invalid={Boolean(errors.actividad)} />{errors.actividad && <span className="field-error">{errors.actividad}</span>}</label>
-            <label className="field wide">Lugar de actividad<input name="lugar" placeholder="Municipio, departamento" aria-invalid={Boolean(errors.lugar)} />{errors.lugar && <span className="field-error">{errors.lugar}</span>}</label>
+            <label className="field">Lugar de actividad<input name="lugar" placeholder="Municipio, departamento" aria-invalid={Boolean(errors.lugar)} />{errors.lugar && <span className="field-error">{errors.lugar}</span>}</label>
             <label className="field">Fecha de actividad<input name="fecha" type="date" aria-invalid={Boolean(errors.fecha)} />{errors.fecha && <span className="field-error">{errors.fecha}</span>}</label>
-            <label className="field">CDT o municipio que representa<input name="municipio" placeholder="Escriba su respuesta" aria-invalid={Boolean(errors.municipio)} />{errors.municipio && <span className="field-error">{errors.municipio}</span>}</label>
-            <fieldset className="field wide"><legend>Rubro o sector que representa</legend><div className="checks">{rubros.map((item) => <label key={item} className="check-label"><input type="checkbox" name="rubro" value={item} />{item}</label>)}<label className="other-input"><span>Especifique:</span><input name="otro" aria-label="Especifique otro rubro" aria-invalid={Boolean(errors.otro)} /></label></div>{errors.rubro && <span className="field-error">{errors.rubro}</span>}{errors.otro && <span className="field-error">{errors.otro}</span>}</fieldset>
-            <fieldset className="field wide"><legend>Género</legend><div className="checks"><label className="check-label"><input type="radio" name="genero" value="Femenino" />Femenino</label><label className="check-label"><input type="radio" name="genero" value="Masculino" />Masculino</label><label className="check-label"><input type="radio" name="genero" value="Prefiero no decir" />Prefiero no decir</label></div>{errors.genero && <span className="field-error">{errors.genero}</span>}</fieldset>
+            <label className="field wide">CDT o municipio que representa<input name="municipio" placeholder="Escriba su respuesta" aria-invalid={Boolean(errors.municipio)} />{errors.municipio && <span className="field-error">{errors.municipio}</span>}</label>
+            <fieldset className="field wide"><legend>Rubro o sector que representa</legend><div className="checks">{rubros.map((item) => <label key={item} className="check-label"><input type="checkbox" name="rubro" value={item} />{item}</label>)}<label className="other-input"><span>Específico:</span><input name="otro" aria-label="Especifique el rubro específico" aria-invalid={Boolean(errors.otro)} /></label></div>{errors.rubro && <span className="field-error">{errors.rubro}</span>}{errors.otro && <span className="field-error">{errors.otro}</span>}</fieldset>
+            <fieldset className="field wide"><legend>Género</legend><div className="checks"><label className="check-label"><input type="radio" name="genero" value="Femenino" />Femenino</label><label className="check-label"><input type="radio" name="genero" value="Masculino" />Masculino</label></div>{errors.genero && <span className="field-error">{errors.genero}</span>}</fieldset>
           </div>
         </motion.section>
         <motion.section className="rating-section" {...reveal(0.03)}><div className="rating-heading"><div><span className="section-number">02</span><h2>Cuéntenos cómo le fue</h2></div><span className="required-note">Seleccione una opción por criterio</span></div>
-          <div className="instructions"><strong>INDICACIONES</strong><span> Para cada aspecto, marque la opción que mejor represente su valoración.</span></div>
+          <div className="instructions"><strong>INDICACIONES:</strong><span> Con el objetivo de elevar la calidad de las acciones desarrolladas para fortalecer los comités de desarrollo turístico y las empresas, se desea conocer su apreciación sobre la actividad desarrollada. Por favor, marque con una "X" la opción que mejor refleje su valoración en cada criterio.</span></div>
           <div className="progress-wrap"><div className="progress-label"><span>Progreso de evaluación</span><span>{answered} de {total} respondidos</span></div><div className="progress-track"><motion.div className="progress-fill" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 90, damping: 20 }} /></div></div>
           <motion.div className="rating-list" variants={listVariants} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-40px' }}>{criteria.map((section, sectionIndex) => <motion.div className="criterion-group" key={section.group} variants={groupVariants}><div className="group-label"><span>0{sectionIndex + 1}</span>{section.group}</div><div className="criterion-rows">{section.items.map((item, itemIndex) => { const key = criterioKey(sectionIndex, itemIndex); return <div className="criterion-row" key={key}><div className="criterion-label"><p>{item}</p>{errors[key] && <span className="field-error">{errors[key]}</span>}</div><div className={`rating-options ${errors[key] ? 'invalid' : ''}`} role="radiogroup" aria-label={item} aria-invalid={Boolean(errors[key])}>{ratings.map((rating, index) => <motion.label key={rating} className={`rating-choice ${answers[key] === rating ? 'selected' : ''}`} whileTap={reduce ? undefined : { scale: 0.97 }}><input type="radio" name={key} value={rating} checked={answers[key] === rating} onChange={() => update(key, rating)} aria-label={rating} /><motion.span className="rating-number" animate={{ scale: answers[key] === rating && !reduce ? 1.08 : 1 }} transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 18 }}>{['10', '9–8', '7', '6', '≤5'][index]}</motion.span><span className="rating-name">{rating.split(' (')[0]}</span></motion.label>)}</div></div> })}</div>          </motion.div>)}</motion.div>
         </motion.section>
